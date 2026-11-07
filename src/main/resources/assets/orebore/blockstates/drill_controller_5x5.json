@@ -1,0 +1,1 @@
+{ "variants": { "facing=north": {"model":"orebore:block/drill_controller_5x5"}, "facing=east": {"model":"orebore:block/drill_controller_5x5"}, "facing=south": {"model":"orebore:block/drill_controller_5x5"}, "facing=west": {"model":"orebore:block/drill_controller_5x5"} } }
