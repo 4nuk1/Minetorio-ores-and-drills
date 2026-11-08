@@ -64,9 +64,8 @@ public final class ModRegistries {
 
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENTS =
             DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, Minetorio.MOD_ID);
-    private static final MapCodec<LongOpenHashSet> INFINITE_CODEC =
-            Codec.LONG.listOf().xmap(LongOpenHashSet::new, set -> new ArrayList<>(set)).fieldOf("positions");
-    /** Позиции бесконечных руд в чанке (хранятся вместе с чанком). */
+   private static final Codec<LongOpenHashSet> INFINITE_CODEC =
+           Codec.LONG.listOf().xmap(LongOpenHashSet::new, set -> new ArrayList<>(set));
     public static final Supplier<AttachmentType<LongOpenHashSet>> INFINITE_ORES = ATTACHMENTS.register("infinite_ores",
             () -> AttachmentType.builder(() -> new LongOpenHashSet()).serialize(INFINITE_CODEC).build());
 
