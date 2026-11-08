@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "minetorio:block/drill_controller_3x3" },
+    "facing=east":  { "model": "minetorio:block/drill_controller_3x3", "y": 90 },
+    "facing=south": { "model": "minetorio:block/drill_controller_3x3", "y": 180 },
+    "facing=west":  { "model": "minetorio:block/drill_controller_3x3", "y": 270 }
+  }
+}

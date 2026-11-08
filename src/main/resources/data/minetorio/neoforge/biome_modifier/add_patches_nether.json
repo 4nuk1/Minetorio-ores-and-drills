@@ -1,0 +1,1 @@
+{ "type": "neoforge:add_features", "biomes": "#minecraft:is_nether", "features": "minetorio:ore_patches", "step": "underground_ores" }
