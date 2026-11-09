@@ -216,12 +216,20 @@ public class DrillControllerBlockEntity extends KineticBlockEntity {
         bit.setRpm(Math.abs(getSpeed()));
     }
 
+    /**
+     * Вызывается Create при фактическом удалении блока или переносе его контрапцией.
+     * Не вызывается при обычной выгрузке чанка, поэтому вращающаяся головка
+     * не будет случайно удаляться при уходе игрока из области.
+     */
     @Override
-    public void setRemoved() {
-        if (level instanceof ServerLevel sl && bitId != null && sl.getEntity(bitId) != null) {
-            sl.getEntity(bitId).discard();
+    public void remove() {
+        if (level instanceof ServerLevel sl && bitId != null) {
+            var bit = sl.getEntity(bitId);
+            if (bit != null) {
+                bit.discard();
+            }
         }
-        super.setRemoved();
+        super.remove();
     }
 
     private void pushOutput() {
