@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "minetorio:block/drill_drive"
+  },
+  "facing=east": {
+   "model": "minetorio:block/drill_drive",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "minetorio:block/drill_drive",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "minetorio:block/drill_drive",
+   "y": 270
+  }
+ }
+}

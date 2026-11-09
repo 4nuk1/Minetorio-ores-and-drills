@@ -1,0 +1,27 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "misc",
+ "pattern": [
+  "BGB",
+  "BCB",
+  "BSB"
+ ],
+ "key": {
+  "B": {
+   "item": "minecraft:iron_block"
+  },
+  "G": {
+   "item": "create:large_cogwheel"
+  },
+  "C": {
+   "item": "create:brass_casing"
+  },
+  "S": {
+   "item": "create:shaft"
+  }
+ },
+ "result": {
+  "id": "minetorio:drill_drive_5x5",
+  "count": 1
+ }
+}
