@@ -37,12 +37,16 @@ public final class ModRegistries {
                 .noOcclusion().requiresCorrectToolForDrops();
     }
 
-    /** Основание головки: каретка, которую двигает поршень Create. */
-    public static final DeferredBlock<Block> DRILL_HEAD_BASE =
-            BLOCKS.register("drill_head_base", () -> new Block(metal()));
-    /** Блок головки: колонна из них под основанием; вокруг нижних блоков появляется вращающаяся головка. */
+    /** Основание головки: принимает вращение сверху и выдвигает вниз стержень. */
+    public static final DeferredBlock<DrillHeadBaseBlock> DRILL_HEAD_BASE =
+            BLOCKS.register("drill_head_base", () -> new DrillHeadBaseBlock(metal()));
+    /** Блок головки (незерит): из них игрок строит головку по форме 3x3 / 5x5. */
     public static final DeferredBlock<Block> DRILL_HEAD =
-            BLOCKS.register("drill_head", () -> new Block(metal().strength(5.0f, 8.0f)));
+            BLOCKS.register("drill_head", () -> new Block(BlockBehaviour.Properties.of().strength(5.0f, 8.0f)
+                    .sound(SoundType.NETHERITE_BLOCK).requiresCorrectToolForDrops()));
+    /** Скрытый блок: только носитель модели стержня (его рисует сущность). В мире не ставится, предмета нет. */
+    public static final DeferredBlock<Block> DRILL_ROD_BLOCK =
+            BLOCKS.register("drill_rod", () -> new Block(BlockBehaviour.Properties.of().noCollission().noLootTable().noOcclusion()));
     public static final DeferredBlock<DrillControllerBlock> CONTROLLER_3X3 =
             BLOCKS.register("drill_drive_3x3", () -> new DrillControllerBlock(metal(), DrillTier.SMALL_3X3));
     public static final DeferredBlock<DrillControllerBlock> CONTROLLER_5X5 =
@@ -58,10 +62,20 @@ public final class ModRegistries {
                     (pos, state) -> new DrillControllerBlockEntity(ModRegistries.CONTROLLER_BE.get(), pos, state),
                     CONTROLLER_3X3.get(), CONTROLLER_5X5.get()).build(null));
 
+    public static final Supplier<BlockEntityType<DrillHeadBaseBlockEntity>> BASE_BE =
+            BLOCK_ENTITIES.register("drill_head_base", () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new DrillHeadBaseBlockEntity(ModRegistries.BASE_BE.get(), pos, state),
+                    DRILL_HEAD_BASE.get()).build(null));
+
     public static final Supplier<EntityType<DrillBitEntity>> DRILL_BIT =
             ENTITY_TYPES.register("drill_bit", () -> EntityType.Builder.<DrillBitEntity>of(DrillBitEntity::new, MobCategory.MISC)
-                    .sized(0.25f, 0.25f).clientTrackingRange(10).updateInterval(2).noSave().noSummon().fireImmune()
+                    .sized(0.25f, 0.25f).clientTrackingRange(10).updateInterval(1).noSave().noSummon().fireImmune()
                     .build("minetorio:drill_bit"));
+
+    public static final Supplier<EntityType<DrillRodEntity>> DRILL_ROD =
+            ENTITY_TYPES.register("drill_rod", () -> EntityType.Builder.<DrillRodEntity>of(DrillRodEntity::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(10).updateInterval(1).noSave().noSummon().fireImmune()
+                    .build("minetorio:drill_rod"));
 
     // --- генерация руд ---
     public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, Minetorio.MOD_ID);
