@@ -6,9 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Форма вращающейся головки (из OBJ-моделей). Слои идут снизу вверх (y = 0 - остриё),
- * строки - ось Z, столбцы - ось X. Центральная колонна (x = 0, z = 0) занята блоками головки,
- * поэтому сущность рисует только остальные кубы.
+ * Формы головок, считанные из OBJ-моделей (куб = 1 блок). Слои идут снизу вверх (y = 0 - остриё),
+ * строки - ось Z, столбцы - ось X, центр головки по X/Z - центральная колонна (x = 0, z = 0).
  */
 public final class DrillShapes {
     private static final String[][] SMALL_LAYERS = {
@@ -24,8 +23,8 @@ public final class DrillShapes {
         {".###.", "#####", "#####", "#####", ".###."},
     };
 
-    private static final Set<BlockPos> VISUAL_SMALL = parse(SMALL_LAYERS);
-    private static final Set<BlockPos> VISUAL_LARGE = parse(LARGE_LAYERS);
+    private static final Set<BlockPos> SMALL = parse(SMALL_LAYERS);   // 21 блок
+    private static final Set<BlockPos> LARGE = parse(LARGE_LAYERS);   // 68 блоков
 
     private static Set<BlockPos> parse(String[][] layers) {
         Set<BlockPos> out = new HashSet<>();
@@ -33,14 +32,13 @@ public final class DrillShapes {
         for (int y = 0; y < layers.length; y++)
             for (int z = 0; z < layers[y].length; z++)
                 for (int x = 0; x < layers[y][z].length(); x++)
-                    if (layers[y][z].charAt(x) == '#' && !(x == half && z == half)) // без центральной колонны
-                        out.add(new BlockPos(x - half, y, z - half));
+                    if (layers[y][z].charAt(x) == '#') out.add(new BlockPos(x - half, y, z - half));
         return out;
     }
 
-    /** Клетки визуальной головки относительно центра самого нижнего блока колонны. */
-    public static Set<BlockPos> visualCells(DrillTier tier) {
-        return tier == DrillTier.SMALL_3X3 ? VISUAL_SMALL : VISUAL_LARGE;
+    /** Клетки головки относительно центра самого нижнего блока (остриё). */
+    public static Set<BlockPos> cells(DrillTier tier) {
+        return tier == DrillTier.SMALL_3X3 ? SMALL : LARGE;
     }
 
     private DrillShapes() {}

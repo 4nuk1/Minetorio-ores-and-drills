@@ -2,29 +2,25 @@ package com.example.minetorio;
 
 /**
  * Стресс в Create = impact * RPM. Базовая скорость 32 RPM: 3x3 -> 1024 su, 5x5 -> 1536 su.
- * Производительность растёт только целыми ступенями (rpm / 32, до 8), поэтому всё кратно базовым значениям.
+ * Ступень скорости = rpm / 32 (до 8). Каждая новая ступень умножает производительность на 1.5 (x1, x1.5, x2.25 ... x17.09).
  */
 public enum DrillTier {
-    //          зона поиска, глубина, impact/RPM, блоков руды/цикл, ед. руды/цикл, блоков головки в колонне
-    SMALL_3X3(2, 20, 32, 1, 1, 5),
-    LARGE_5X5(3, 30, 48, 2, 3, 8);
+    //          impact/RPM, блоков руды/цикл, ед. руды/цикл, высота головки (блоков)
+    SMALL_3X3(32, 1, 1, 5),
+    LARGE_5X5(48, 2, 3, 8);
 
-    public final int platformHalf;
-    public final int height;
     public final float impactPerRpm;
     public final int oreBlocksPerCycle;
     public final int rawPerCycle;
-    private final int rods;
+    private final int shapeHeight;
 
-    DrillTier(int platformHalf, int height, float impactPerRpm, int oreBlocksPerCycle, int rawPerCycle, int rods) {
-        this.platformHalf = platformHalf;
-        this.height = height;
+    DrillTier(float impactPerRpm, int oreBlocksPerCycle, int rawPerCycle, int shapeHeight) {
         this.impactPerRpm = impactPerRpm;
         this.oreBlocksPerCycle = oreBlocksPerCycle;
         this.rawPerCycle = rawPerCycle;
-        this.rods = rods;
+        this.shapeHeight = shapeHeight;
     }
 
-    /** Сколько блоков "Блок головки бура" должно стоять колонной под основанием. */
-    public int rods() { return rods; }
+    /** Высота головки: основание стоит на этой высоте над нижней точкой стержня. */
+    public int shapeHeight() { return shapeHeight; }
 }
