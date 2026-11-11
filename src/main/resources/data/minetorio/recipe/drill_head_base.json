@@ -2,19 +2,19 @@
  "type": "minecraft:crafting_shaped",
  "category": "misc",
  "pattern": [
-  "IAI",
   "ISI",
+  "ICI",
   "III"
  ],
  "key": {
   "I": {
    "item": "minecraft:iron_ingot"
   },
-  "A": {
-   "item": "create:andesite_casing"
-  },
   "S": {
    "item": "create:shaft"
+  },
+  "C": {
+   "item": "create:andesite_casing"
   }
  },
  "result": {
