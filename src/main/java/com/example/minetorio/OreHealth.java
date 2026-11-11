@@ -38,6 +38,13 @@ public final class OreHealth {
                 && c.getData(ModRegistries.ORE_HEALTH.get()).containsKey(pos.asLong());
     }
 
+    /** Текущая прочность блока руды (0, если блок не из пласта). */
+    public static int get(ServerLevel level, BlockPos pos) {
+        LevelChunk c = level.getChunkAt(pos);
+        if (!c.hasData(ModRegistries.ORE_HEALTH.get())) return 0;
+        return c.getData(ModRegistries.ORE_HEALTH.get()).get(pos.asLong());
+    }
+
     /** Снимает 1 прочность. Возвращает остаток (0 - запись удалена, блок пора убирать); -1 - блок не отслеживается. */
     public static int hit(ServerLevel level, BlockPos pos) {
         LevelChunk c = level.getChunkAt(pos);
