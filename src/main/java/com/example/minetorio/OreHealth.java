@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
@@ -38,6 +39,13 @@ public final class OreHealth {
                 && c.getData(ModRegistries.ORE_HEALTH.get()).containsKey(pos.asLong());
     }
 
+    /** Текущая прочность блока руды (0, если блок не из пласта). */
+    public static int get(ServerLevel level, BlockPos pos) {
+        LevelChunk c = level.getChunkAt(pos);
+        if (!c.hasData(ModRegistries.ORE_HEALTH.get())) return 0;
+        return c.getData(ModRegistries.ORE_HEALTH.get()).get(pos.asLong());
+    }
+
     /** Снимает 1 прочность. Возвращает остаток (0 - запись удалена, блок пора убирать); -1 - блок не отслеживается. */
     public static int hit(ServerLevel level, BlockPos pos) {
         LevelChunk c = level.getChunkAt(pos);
@@ -60,6 +68,8 @@ public final class OreHealth {
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent e) {
         if (!(e.getLevel() instanceof ServerLevel level)) return;
+        // на отслеженной позиции мог оказаться не блок руды (например, структура перекрыла пласт): тогда запись не нужна
+        if (!e.getState().is(Tags.Blocks.ORES)) { forget(level, e.getPos()); return; }
         int left = hit(level, e.getPos());
         // дроп и опыт игрок получает как обычно; если прочность осталась, блок вернётся на место в конце тика
         if (left > 0) PENDING.add(new Restore(level, e.getPos().immutable(), e.getState()));
@@ -83,7 +93,7 @@ public final class OreHealth {
         if (tnt) {
             for (BlockPos p : e.getAffectedBlocks()) forget(level, p); // блок разрушится - запись прочности не нужна
         } else {
-            e.getAffectedBlocks().removeIf(p -> isTracked(level, p)); // крипер и прочее руду не ломают
+            e.getAffectedBlocks().removeIf(p -> isTracked(level, p) && level.getBlockState(p).is(Tags.Blocks.ORES)); // крипер и прочее руду не ломают
         }
     }
 

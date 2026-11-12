@@ -23,11 +23,9 @@ public class OrePatchFeature extends Feature<NoneFeatureConfiguration> {
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
         WorldGenLevel level = ctx.level();
-        var dim = level.getLevel().dimension();
-        boolean inNether;
-        if (dim == Level.OVERWORLD) inNether = false;
-        else if (dim == Level.NETHER) inNether = true;
-        else return false;
+        if (level.getLevel().dimension() == Level.END) return false;
+        // измерение с потолком (Нижний мир и подобные) получает пласты на полу пещер, остальные - на поверхности
+        boolean inNether = level.dimensionType().hasCeiling();
 
         int baseX = ctx.origin().getX() & ~15;
         int baseZ = ctx.origin().getZ() & ~15;
@@ -87,13 +85,16 @@ public class OrePatchFeature extends Feature<NoneFeatureConfiguration> {
         return placedAny;
     }
 
-    /** Нижний мир: пол первой пещеры под потолочной массой, не лавовое море. -1 если подходящего нет. */
+    /** Измерение с потолком: пол первой пещеры под потолочной массой, не лавовое море. -1 если подходящего нет. */
     private static int netherFloor(WorldGenLevel level, int x, int z) {
-        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos(x, 110, z);
-        int y = 110;
-        while (y > 33 && level.getBlockState(p.setY(y)).blocksMotion()) y--;   // выйти из потолка
-        while (y > 33 && !level.getBlockState(p.setY(y)).blocksMotion()) y--;  // найти пол
-        if (y <= 33) return -1;
+        int min = level.getMinBuildHeight();
+        int top = min + level.dimensionType().logicalHeight() - 18;   // 110 для Нижнего мира
+        int bottom = min + 33;
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos(x, top, z);
+        int y = top;
+        while (y > bottom && level.getBlockState(p.setY(y)).blocksMotion()) y--;   // выйти из потолка
+        while (y > bottom && !level.getBlockState(p.setY(y)).blocksMotion()) y--;  // найти пол
+        if (y <= bottom) return -1;
         if (!level.getBlockState(p.setY(y + 1)).getFluidState().isEmpty()) return -1;
         return y;
     }
